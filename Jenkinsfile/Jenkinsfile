@@ -1,0 +1,83 @@
+pipeline {
+    agent any
+
+    triggers {
+        pollSCM('H/5 * * * *') // Check for changes every 5 minutes
+    }
+
+    environment {
+        REACT_DIR = "react-app"
+        ANGULAR_DIR = "angular-app"
+        VUE_DIR = "vue-app"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/michoolly15/scenario-1.git'
+            }
+        }
+
+        stage('Detect Changes') {
+            steps {
+                script {
+                    def changedFiles = sh(script: "git diff --name-only HEAD~1", returnStdout: true).trim()
+                    echo "Changed files: ${changedFiles}"
+
+                    if (changedFiles.contains(env.REACT_DIR)) {
+                        buildReact = true
+                    }
+                    if (changedFiles.contains(env.ANGULAR_DIR)) {
+                        buildAngular = true
+                    }
+                    if (changedFiles.contains(env.VUE_DIR)) {
+                        buildVue = true
+                    }
+                }
+            }
+        }
+
+        stage('Build React App') {
+            when { expression { return buildReact } }
+            steps {
+                script {
+                    dir(env.REACT_DIR) {
+                        sh 'npm install'
+                        sh 'npm run build'
+                    }
+                }
+            }
+        }
+
+        stage('Build Angular App') {
+            when { expression { return buildAngular } }
+            steps {
+                script {
+                    dir(env.ANGULAR_DIR) {
+                        sh 'npm install'
+                        sh 'npm run build'
+                    }
+                }
+            }
+        }
+
+        stage('Build Vue App') {
+            when { expression { return buildVue } }
+            steps {
+                script {
+                    dir(env.VUE_DIR) {
+                        sh 'npm install'
+                        sh 'npm run build'
+                    }
+                }
+            }
+        }
+
+        stage('Deploy Applications') {
+            steps {
+                echo "Deploying applications..."
+                // Add deployment commands here
+            }
+        }
+    }
+}
