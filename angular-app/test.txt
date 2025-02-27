@@ -1,7 +1,5 @@
 
 
-#!/bin/bash
-
 
 #############################
 #  Author: Ogundare Michael
@@ -16,5 +14,3 @@
 I will be done with the assignment soon.
 
 Thanks for your wonderful guide.
-
-
