@@ -1,37 +1,34 @@
-
-
-
 pipeline {
     agent any
 
-    stages {
-        stage ('Build_angular_app') {
-            when {
-                changeset "**/angular-app/**"  
-            }
-            steps {
-                echo "Start building angular app if there is any new commit"
-                
-            }
-        }
 
-        stage('Build_react_app') {
+    stages {
+        stage ('Build Angular App'){
             when {
-                changeset "**/react-app/**"  
+                changeset "**/angular-app/**" // Build an angular app whenever there is new commits from the previous commit
             }
             steps {
-                echo "Start building react app if there is any new commit"
-                
+            echo "Building an angular app is ongoing..."
+            sh 'cd angular-app && npm install && npm run build'
             }
-        }
-         stage('Build_vue_app') {
+        } 
+         stage ('Build React App'){
             when {
-                changeset "**/vue-app/**"  
+                changeset "**/react-app/**" // Build an react app whenever there is new commits from the previous commit
             }
             steps {
-                echo "Start building angular app if there is any new commit"
-                
+            echo "Building an react app is ongoing..."
+            sh 'cd react-app && npm install && npm run build'
             }
-        }
+        } 
+         stage ('Build Vue App'){
+            when {
+                changeset "**/vue-app/**" // Build an vue app whenever there is new commits from the previous commit
+            }
+            steps {
+            echo "Building an vue app is ongoing..."
+            sh 'cd vue-app && npm install && npm run build'
+            }
+        } 
     }
 }
